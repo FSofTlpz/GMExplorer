@@ -87,12 +87,17 @@ namespace GMExplorer {
          dummytabpage = tabControl1.TabPages[0];
          tabControl1.TabPages.Clear();
 
-         for (int i = 0; i < Args.Length; i++)
-            NewTabPageWithFile(Args[i].Trim());
+         try {
+            for (int i = 0; i < Args.Length; i++)
+               NewTabPageWithFile(Args[i].Trim());
 
-         if (Args.Length > 0) {
-            TabPageData tpd = TabPageData4Page(tabControl1.TabPages[0]);
-            tpd.Tv.Select();
+            if (Args.Length > 0 &&
+                tabControl1.TabPages.Count > 0) {
+               TabPageData tpd = TabPageData4Page(tabControl1.TabPages[0]);
+               tpd.Tv.Select();
+            }
+         } catch (Exception ex) {
+            MessageBox.Show(ex.Message, "error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
          }
       }
 

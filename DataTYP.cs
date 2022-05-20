@@ -291,7 +291,12 @@ namespace GMExplorer {
                      info.AppendLine("Type     (1 Byte): " + DecimalAndHexAndBinary(doi.Type));
                      filedata.BinaryReader.Seek(firsthexadr + 1);
                      byte[] st = filedata.BinaryReader.ReadBytes(typ.PolygoneDraworderTableBlock.Recordsize - 1);
-                     info.AppendLine("Subtypes (" + st.Length.ToString() + " Byte): " + HexString(st) + " / 0b" + Binary(st));
+                     uint styp = 0;
+                     for (int i = 0; i < st.Length; i++) {
+                        styp <<= 8;
+                        styp += st[i];
+                     }
+                     info.AppendLine("Subtypes (" + st.Length.ToString() + " Byte): " + HexString(st) + " / 0b" + Binary(styp));
                      for (int j = 0; j < doi.Subtypes.Count; j++)
                         info.AppendLine("Subtype:           " + DecimalAndHexAndBinary(doi.Subtypes[j]));
                   }

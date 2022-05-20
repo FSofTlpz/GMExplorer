@@ -27,12 +27,12 @@ namespace GMExplorer {
             AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_RegionBlock, lbl, "RegionBlock"));
          if (lbl.CityBlock != null && lbl.CityBlock.Length > 0)
             AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_CityBlock, lbl, "CityBlock"));
-         if (lbl.POIIndexBlock != null && lbl.POIIndexBlock.Length > 0)
-            AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_POIIndexBlock, lbl, "POIIndexBlock"));
          if (lbl.POIPropertiesBlock != null && lbl.POIPropertiesBlock.Length > 0)
-            AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_POIPropertiesBlock, lbl, "POIPropertiesBlock"));
+            AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_PointPropertiesBlock, lbl, "PointPropertiesBlock"));
+         if (lbl.POIIndexBlock != null && lbl.POIIndexBlock.Length > 0)
+            AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_PointIndexList4RGN, lbl, "PointIndexList4RGN"));
          if (lbl.POITypeIndexBlock != null && lbl.POITypeIndexBlock.Length > 0)
-            AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_POITypeIndexBlock, lbl, "POITypeIndexBlock"));
+            AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_PointTypeIndexList4RGN, lbl, "POITypeIndexBlock"));
          if (lbl.ZipBlock != null && lbl.ZipBlock.Length > 0)
             AppendNode(AppendNode(tn, NodeContent.NodeType.LBL_ZipBlock, lbl, "ZipBlock"));
          if (lbl.HighwayWithExitBlock != null && lbl.HighwayWithExitBlock.Length > 0)
@@ -126,18 +126,18 @@ namespace GMExplorer {
                   AppendNode(tn, NodeContent.NodeType.Index, i, "CityAndRegionOrCountry " + i.ToString());
                break;
 
-            case NodeContent.NodeType.LBL_POIIndexBlock:
-               for (int i = 0; i < lbl.PoiIndexDataList.Count; i++)
+            case NodeContent.NodeType.LBL_PointIndexList4RGN:
+               for (int i = 0; i < lbl.PointIndexList4RGN.Count; i++)
                   AppendNode(tn, NodeContent.NodeType.Index, i, "PoiIndex " + i.ToString());
                break;
 
-            case NodeContent.NodeType.LBL_POIPropertiesBlock:
-               for (int i = 0; i < lbl.POIPropertiesList.Count; i++)
+            case NodeContent.NodeType.LBL_PointPropertiesBlock:
+               for (int i = 0; i < lbl.PointPropertiesList.Count; i++)
                   AppendNode(tn, NodeContent.NodeType.Index, i, "POIProperties " + i.ToString());
                break;
 
-            case NodeContent.NodeType.LBL_POITypeIndexBlock:
-               for (int i = 0; i < lbl.PoiTypeIndexDataList.Count; i++)
+            case NodeContent.NodeType.LBL_PointTypeIndexList4RGN:
+               for (int i = 0; i < lbl.PointTypeIndexList4RGN.Count; i++)
                   AppendNode(tn, NodeContent.NodeType.Index, i, "PoiTypeIndex " + i.ToString());
                break;
 
@@ -339,135 +339,136 @@ namespace GMExplorer {
       }
 
       public static void SpecialHeader(StringBuilder info, GarminCore.Files.StdFile_LBL lbl) {
-         info.AppendLine("TextBlock:              " + lbl.TextBlock.ToString());
-         info.AppendLine("DataOffsetMultiplier:   " + DecimalAndHexAndBinary(lbl.DataOffsetMultiplier));
-         info.AppendLine("EncodingType:           " + DecimalAndHexAndBinary(lbl.EncodingType));
-         info.AppendLine("CountryBlock:           " + lbl.CountryBlock.ToString());
-         info.AppendLine("Unknown 0x29:           " + HexString(lbl.Unknown_0x29));
-         info.AppendLine("RegionBlock:            " + lbl.RegionBlock.ToString());
-         info.AppendLine("Unknown 0x37:           " + HexString(lbl.Unknown_0x37));
-         info.AppendLine("CityBlock:              " + lbl.CityBlock.ToString());
-         info.AppendLine("Unknown 0x45:           " + HexString(lbl.Unknown_0x45));
-         info.AppendLine("PoiIndexDataList:       " + lbl.POIIndexBlock.ToString());
-         info.AppendLine("Unknown 0x53:           " + HexString(lbl.Unknown_0x53));
-         info.AppendLine("POIPropertiesBlock:     " + lbl.POIPropertiesBlock.ToString());
-         info.AppendLine("POIOffsetMultiplier:    " + DecimalAndHexAndBinary(lbl.POIOffsetMultiplier) + " -> " + (0x1 << lbl.POIOffsetMultiplier));
-         info.AppendLine("POIGlobalMask:          " + DecimalAndHexAndBinary((byte)lbl.POIGlobalMask));
-         info.AppendLine("Unknown 0x61:           " + HexString(lbl.Unknown_0x61));
-         info.AppendLine("POITypeIndexBlock:      " + lbl.POITypeIndexBlock.ToString());
-         info.AppendLine("Unknown 0x6E:           " + HexString(lbl.Unknown_0x6E));
-         info.AppendLine("ZipBlock:               " + lbl.ZipBlock.ToString());
-         info.AppendLine("Unknown 0x7C:           " + HexString(lbl.Unknown_0x7C));
-         info.AppendLine("HighwayWithExitBlock:   " + lbl.HighwayWithExitBlock.ToString());
-         info.AppendLine("Unknown 0x8A:           " + HexString(lbl.Unknown_0x8A));
-         info.AppendLine("ExitBlock:              " + lbl.ExitBlock.ToString());
-         info.AppendLine("Unknown 0x98:           " + HexString(lbl.Unknown_0x98));
-         info.AppendLine("HighwayExitBlock:       " + lbl.HighwayExitBlock.ToString());
-         info.AppendLine("Unknown 0xA6:           " + HexString(lbl.Unknown_0xA6));
+         int tab = 28;
+         info.AppendLine(FillWithSpace("TextBlock", tab, false, lbl.TextBlock.ToString()));
+         info.AppendLine(FillWithSpace("DataOffsetMultiplier", tab, false, DecimalAndHexAndBinary(lbl.DataOffsetMultiplier)));
+         info.AppendLine(FillWithSpace("EncodingType", tab, false, DecimalAndHexAndBinary(lbl.EncodingType)));
+         info.AppendLine(FillWithSpace("CountryBlock", tab, false, lbl.CountryBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x29", tab, false, HexString(lbl.Unknown_0x29)));
+         info.AppendLine(FillWithSpace("RegionBlock", tab, false, lbl.RegionBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x37", tab, false, HexString(lbl.Unknown_0x37)));
+         info.AppendLine(FillWithSpace("CityBlock", tab, false, lbl.CityBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x45", tab, false, HexString(lbl.Unknown_0x45)));
+         info.AppendLine(FillWithSpace("PoiIndexDataList", tab, false, lbl.POIIndexBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x53", tab, false, HexString(lbl.Unknown_0x53)));
+         info.AppendLine(FillWithSpace("POIPropertiesBlock", tab, false, lbl.POIPropertiesBlock.ToString()));
+         info.AppendLine(FillWithSpace("POIOffsetMultiplier", tab, false, DecimalAndHexAndBinary(lbl.POIOffsetMultiplier) + " -> " + (0x1 << lbl.POIOffsetMultiplier)));
+         info.AppendLine(FillWithSpace("POIGlobalMask", tab, false, DecimalAndHexAndBinary((byte)lbl.POIGlobalMask)));
+         info.AppendLine(FillWithSpace("Unknown 0x61", tab, false, HexString(lbl.Unknown_0x61)));
+         info.AppendLine(FillWithSpace("POITypeIndexBlock", tab, false, lbl.POITypeIndexBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x6E", tab, false, HexString(lbl.Unknown_0x6E)));
+         info.AppendLine(FillWithSpace("ZipBlock", tab, false, lbl.ZipBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x7C", tab, false, HexString(lbl.Unknown_0x7C)));
+         info.AppendLine(FillWithSpace("HighwayWithExitBlock", tab, false, lbl.HighwayWithExitBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x8A", tab, false, HexString(lbl.Unknown_0x8A)));
+         info.AppendLine(FillWithSpace("ExitBlock", tab, false, lbl.ExitBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0x98", tab, false, HexString(lbl.Unknown_0x98)));
+         info.AppendLine(FillWithSpace("HighwayExitBlock", tab, false, lbl.HighwayExitBlock.ToString()));
+         info.AppendLine(FillWithSpace("Unknown 0xA6", tab, false, HexString(lbl.Unknown_0xA6)));
          if (lbl.Headerlength >= 0xAA) {
-            info.AppendLine("Codepage:               " + DecimalAndHexAndBinary(lbl.Codepage));
-            info.AppendLine("ID1:                    " + DecimalAndHexAndBinary(lbl.ID1));
-            info.AppendLine("ID2:                    " + DecimalAndHexAndBinary(lbl.ID2));
-            info.AppendLine("SortDescriptorDefBlock: " + lbl.SortDescriptorDefBlock.ToString());
-            info.AppendLine("Lbl13Block:             " + lbl.Lbl13Block.ToString());
-            info.AppendLine("Unknown 0xC2:           " + HexString(lbl.Unknown_0xC2));
-            info.AppendLine("TidePredictionBlock:    " + lbl.TidePredictionBlock.ToString());
+            info.AppendLine(FillWithSpace("Codepage", tab, false, DecimalAndHexAndBinary(lbl.Codepage)));
+            info.AppendLine(FillWithSpace("ID1", tab, false, DecimalAndHexAndBinary(lbl.ID1)));
+            info.AppendLine(FillWithSpace("ID2", tab, false, DecimalAndHexAndBinary(lbl.ID2)));
+            info.AppendLine(FillWithSpace("SortDescriptorDefBlock", tab, false, lbl.SortDescriptorDefBlock.ToString()));
+            info.AppendLine(FillWithSpace("Lbl13Block", tab, false, lbl.Lbl13Block.ToString()));
+            info.AppendLine(FillWithSpace("Unknown 0xC2", tab, false, HexString(lbl.Unknown_0xC2)));
+            info.AppendLine(FillWithSpace("TidePredictionBlock", tab, false, lbl.TidePredictionBlock.ToString()));
             if (lbl.Headerlength >= 0xCE)
-               info.AppendLine("Unknown 0xCE:           " + HexString(lbl.Unknown_0xCE));
+               info.AppendLine(FillWithSpace("Unknown 0xCE", tab, false, HexString(lbl.Unknown_0xCE)));
             if (lbl.Headerlength >= 0xD0)
-               info.AppendLine("UnknownBlock 0xD0:      " + lbl.UnknownBlock_0xD0.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0xD0", tab, false, lbl.UnknownBlock_0xD0.ToString()));
             if (lbl.Headerlength >= 0xD8)
-               info.AppendLine("Unknown 0xD8:           " + HexString(lbl.Unknown_0xD8));
+               info.AppendLine(FillWithSpace("Unknown 0xD8", tab, false, HexString(lbl.Unknown_0xD8)));
             if (lbl.Headerlength >= 0xDE)
-               info.AppendLine("UnknownBlock 0xDE:      " + lbl.UnknownBlock_0xDE.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0xDE", tab, false, lbl.UnknownBlock_0xDE.ToString()));
             if (lbl.Headerlength >= 0xE6)
-               info.AppendLine("Unknown 0xE6:           " + HexString(lbl.Unknown_0xE6));
+               info.AppendLine(FillWithSpace("Unknown 0xE6", tab, false, HexString(lbl.Unknown_0xE6)));
             if (lbl.Headerlength >= 0xEC)
-               info.AppendLine("UnknownBlock 0xEC:      " + lbl.UnknownBlock_0xEC.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0xEC", tab, false, lbl.UnknownBlock_0xEC.ToString()));
             if (lbl.Headerlength >= 0xF4)
-               info.AppendLine("Unknown 0xF4:           " + HexString(lbl.Unknown_0xF4));
+               info.AppendLine(FillWithSpace("Unknown 0xF4", tab, false, HexString(lbl.Unknown_0xF4)));
             if (lbl.Headerlength >= 0xFA)
-               info.AppendLine("UnknownBlock 0xFA:      " + lbl.UnknownBlock_0xFA.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0xFA", tab, false, lbl.UnknownBlock_0xFA.ToString()));
             if (lbl.Headerlength >= 0x102)
-               info.AppendLine("Unknown 0x102:          " + HexString(lbl.Unknown_0x102));
+               info.AppendLine(FillWithSpace("Unknown 0x102", tab, false, HexString(lbl.Unknown_0x102)));
             if (lbl.Headerlength >= 0x108)
-               info.AppendLine("UnknownBlock 0x108:     " + lbl.UnknownBlock_0x108.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x108", tab, false, lbl.UnknownBlock_0x108.ToString()));
             if (lbl.Headerlength >= 0x110)
-               info.AppendLine("Unknown 0x110:          " + HexString(lbl.Unknown_0x110));
+               info.AppendLine(FillWithSpace("Unknown 0x110", tab, false, HexString(lbl.Unknown_0x110)));
             if (lbl.Headerlength >= 0x116)
-               info.AppendLine("UnknownBlock 0x116:     " + lbl.UnknownBlock_0x116.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x116", tab, false, lbl.UnknownBlock_0x116.ToString()));
             if (lbl.Headerlength >= 0x11E)
-               info.AppendLine("Unknown 0x11E:          " + HexString(lbl.Unknown_0x11E));
+               info.AppendLine(FillWithSpace("Unknown 0x11E", tab, false, HexString(lbl.Unknown_0x11E)));
             if (lbl.Headerlength >= 0x124)
-               info.AppendLine("UnknownBlock 0x124:     " + lbl.UnknownBlock_0x124.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x124", tab, false, lbl.UnknownBlock_0x124.ToString()));
             if (lbl.Headerlength >= 0x12C)
-               info.AppendLine("Unknown 0x12C:          " + HexString(lbl.Unknown_0x12C));
+               info.AppendLine(FillWithSpace("Unknown 0x12C", tab, false, HexString(lbl.Unknown_0x12C)));
             if (lbl.Headerlength >= 0x132)
-               info.AppendLine("UnknownBlock 0x132:     " + lbl.UnknownBlock_0x132.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x132", tab, false, lbl.UnknownBlock_0x132.ToString()));
             if (lbl.Headerlength >= 0x13A)
-               info.AppendLine("Unknown 0x13A:          " + HexString(lbl.Unknown_0x13A));
+               info.AppendLine(FillWithSpace("Unknown 0x13A", tab, false, HexString(lbl.Unknown_0x13A)));
             if (lbl.Headerlength >= 0x140)
-               info.AppendLine("UnknownBlock 0x140:     " + lbl.UnknownBlock_0x140.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x140", tab, false, lbl.UnknownBlock_0x140.ToString()));
             if (lbl.Headerlength >= 0x148)
-               info.AppendLine("Unknown 0x148:          " + HexString(lbl.Unknown_0x148));
+               info.AppendLine(FillWithSpace("Unknown 0x148", tab, false, HexString(lbl.Unknown_0x148)));
             if (lbl.Headerlength >= 0x14E)
-               info.AppendLine("UnknownBlock 0x14E:     " + lbl.UnknownBlock_0x14E.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x14E", tab, false, lbl.UnknownBlock_0x14E.ToString()));
             if (lbl.Headerlength >= 0x156)
-               info.AppendLine("Unknown 0x156:          " + HexString(lbl.Unknown_0x156));
+               info.AppendLine(FillWithSpace("Unknown 0x156", tab, false, HexString(lbl.Unknown_0x156)));
             if (lbl.Headerlength >= 0x15A)
-               info.AppendLine("UnknownBlock 0x15A:     " + lbl.UnknownBlock_0x15A.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x15A", tab, false, lbl.UnknownBlock_0x15A.ToString()));
             if (lbl.Headerlength >= 0x162)
-               info.AppendLine("Unknown 0x162:          " + HexString(lbl.Unknown_0x162));
+               info.AppendLine(FillWithSpace("Unknown 0x162", tab, false, HexString(lbl.Unknown_0x162)));
             if (lbl.Headerlength >= 0x168)
-               info.AppendLine("UnknownBlock 0x168:     " + lbl.UnknownBlock_0x168.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x168", tab, false, lbl.UnknownBlock_0x168.ToString()));
             if (lbl.Headerlength >= 0x170)
-               info.AppendLine("Unknown 0x170:          " + HexString(lbl.Unknown_0x170));
+               info.AppendLine(FillWithSpace("Unknown 0x170", tab, false, HexString(lbl.Unknown_0x170)));
             if (lbl.Headerlength >= 0x176)
-               info.AppendLine("UnknownBlock 0x176:     " + lbl.UnknownBlock_0x176.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x176", tab, false, lbl.UnknownBlock_0x176.ToString()));
             if (lbl.Headerlength >= 0x17E)
-               info.AppendLine("Unknown 0x17E:          " + HexString(lbl.Unknown_0x17E));
+               info.AppendLine(FillWithSpace("Unknown 0x17E", tab, false, HexString(lbl.Unknown_0x17E)));
             if (lbl.Headerlength >= 0x184)
-               info.AppendLine("UnknownBlock 0x184:     " + lbl.UnknownBlock_0x184.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x184", tab, false, lbl.UnknownBlock_0x184.ToString()));
             if (lbl.Headerlength >= 0x18C)
-               info.AppendLine("Unknown 0x18C:          " + HexString(lbl.Unknown_0x18C));
+               info.AppendLine(FillWithSpace("Unknown 0x18C", tab, false, HexString(lbl.Unknown_0x18C)));
             if (lbl.Headerlength >= 0x192)
-               info.AppendLine("UnknownBlock 0x192:     " + lbl.UnknownBlock_0x192.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x192", tab, false, lbl.UnknownBlock_0x192.ToString()));
             if (lbl.Headerlength >= 0x19A)
-               info.AppendLine("UnknownBlock 0x19A:     " + lbl.UnknownBlock_0x19A.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x19A", tab, false, lbl.UnknownBlock_0x19A.ToString()));
             if (lbl.Headerlength >= 0x1A2)
-               info.AppendLine("Unknown 0x1A2:          " + HexString(lbl.Unknown_0x1A2));
+               info.AppendLine(FillWithSpace("Unknown 0x1A2", tab, false, HexString(lbl.Unknown_0x1A2)));
             if (lbl.Headerlength >= 0x1A6)
-               info.AppendLine("UnknownBlock 0x1A6:     " + lbl.UnknownBlock_0x1A6.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1A6", tab, false, lbl.UnknownBlock_0x1A6.ToString()));
             if (lbl.Headerlength >= 0x1AE)
-               info.AppendLine("Unknown 0x1AE:          " + HexString(lbl.Unknown_0x1AE));
+               info.AppendLine(FillWithSpace("Unknown 0x1AE", tab, false, HexString(lbl.Unknown_0x1AE)));
             if (lbl.Headerlength >= 0x1B2)
-               info.AppendLine("UnknownBlock 0x1B2:     " + lbl.UnknownBlock_0x1B2.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1B2", tab, false, lbl.UnknownBlock_0x1B2.ToString()));
             if (lbl.Headerlength >= 0x1BA)
-               info.AppendLine("Unknown 0x1BA:          " + HexString(lbl.Unknown_0x1BA));
+               info.AppendLine(FillWithSpace("Unknown 0x1BA", tab, false, HexString(lbl.Unknown_0x1BA)));
             if (lbl.Headerlength >= 0x1BE)
-               info.AppendLine("UnknownBlock 0x1BE:     " + lbl.UnknownBlock_0x1BE.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1BE", tab, false, lbl.UnknownBlock_0x1BE.ToString()));
             if (lbl.Headerlength >= 0x1C6)
-               info.AppendLine("Unknown 0x1C6:          " + HexString(lbl.Unknown_0x1C6));
+               info.AppendLine(FillWithSpace("Unknown 0x1C6", tab, false, HexString(lbl.Unknown_0x1C6)));
             if (lbl.Headerlength >= 0x1CA)
-               info.AppendLine("UnknownBlock 0x1CA:     " + lbl.UnknownBlock_0x1CA.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1CA", tab, false, lbl.UnknownBlock_0x1CA.ToString()));
             if (lbl.Headerlength >= 0x1D2)
-               info.AppendLine("Unknown 0x1D2:          " + HexString(lbl.Unknown_0x1D2));
+               info.AppendLine(FillWithSpace("Unknown 0x1D2", tab, false, HexString(lbl.Unknown_0x1D2)));
             if (lbl.Headerlength >= 0x1D8)
-               info.AppendLine("UnknownBlock 0x1D8:     " + lbl.UnknownBlock_0x1D8.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1D8", tab, false, lbl.UnknownBlock_0x1D8.ToString()));
             if (lbl.Headerlength >= 0x1E0)
-               info.AppendLine("Unknown 0x1E0:          " + HexString(lbl.Unknown_0x1E0));
+               info.AppendLine(FillWithSpace("Unknown 0x1E0", tab, false, HexString(lbl.Unknown_0x1E0)));
             if (lbl.Headerlength >= 0x1E6)
-               info.AppendLine("UnknownBlock 0x1E6:     " + lbl.UnknownBlock_0x1E6.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1E6", tab, false, lbl.UnknownBlock_0x1E6.ToString()));
             if (lbl.Headerlength >= 0x1EE)
-               info.AppendLine("Unknown 0x1EE:          " + HexString(lbl.Unknown_0x1EE));
+               info.AppendLine(FillWithSpace("Unknown 0x1EE", tab, false, HexString(lbl.Unknown_0x1EE)));
             if (lbl.Headerlength >= 0x1F2)
-               info.AppendLine("UnknownBlock 0x1F2:     " + lbl.UnknownBlock_0x1F2.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x1F2", tab, false, lbl.UnknownBlock_0x1F2.ToString()));
             if (lbl.Headerlength >= 0x1FA)
-               info.AppendLine("Unknown 0x1FA:          " + HexString(lbl.Unknown_0x1FA));
+               info.AppendLine(FillWithSpace("Unknown 0x1FA", tab, false, HexString(lbl.Unknown_0x1FA)));
             if (lbl.Headerlength >= 0x200)
-               info.AppendLine("UnknownBlock 0x200:     " + lbl.UnknownBlock_0x200.ToString());
+               info.AppendLine(FillWithSpace("UnknownBlock 0x200", tab, false, lbl.UnknownBlock_0x200.ToString()));
             if (lbl.Headerlength >= 0x208)
-               info.AppendLine("Unknown 0x208:          " + HexString(lbl.Unknown_0x208));
+               info.AppendLine(FillWithSpace("Unknown 0x208", tab, false, HexString(lbl.Unknown_0x208)));
          }
       }
 
@@ -486,6 +487,7 @@ namespace GMExplorer {
          int hexlen = 0;
          firsthexadr = 0;
          hex = null;
+         int tab = 20;
 
          switch (nodetype) {
             case NodeContent.NodeType.LBL_PostHeaderData:
@@ -499,14 +501,16 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_TextBlock:
                firsthexadr = lbl.TextBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("TextBlock: " + lbl.TextList.Count.ToString());
-                  info.AppendLine("  Block:   " + lbl.TextBlock.ToString());
-                  info.AppendLine("  Count:   " + lbl.TextList.Count.ToString());
+                  tab = 12;
+                  info.AppendLine(FillWithSpace("TextBlock", tab, false, lbl.TextList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.TextBlock.ToString()));
+                  info.AppendLine(FillWithSpace("   Count", tab, false, lbl.TextList.Count.ToString()));
                   hexlen = (int)lbl.TextBlock.Length;
                } else {
+                  tab = 12;
                   int[] offset = lbl.TextList.Offsets();
-                  info.AppendLine("TextOffset: " + DecimalAndHexAndBinary(offset[idx]));
-                  info.AppendLine("   Text:    '" + lbl.GetText((uint)offset[idx], true) + "'");
+                  info.AppendLine(FillWithSpace("TextOffset", tab, false, DecimalAndHexAndBinary(offset[idx])));
+                  info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText((uint)offset[idx], true)));
                   firsthexadr += offset[idx] * (0x1 << lbl.DataOffsetMultiplier);
                   hexlen = idx < offset.Length - 1 ?
                                     (offset[idx + 1] - offset[idx]) * (0x1 << lbl.DataOffsetMultiplier) :
@@ -517,13 +521,15 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_CountryBlock:
                firsthexadr = lbl.CountryBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("CountryBlock: " + lbl.CountryDataList.Count.ToString());
-                  info.AppendLine("  Block:      " + lbl.CountryBlock.ToString());
+                  tab = 14;
+                  info.AppendLine(FillWithSpace("CountryBlock", tab, false, lbl.CountryDataList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.CountryBlock.ToString()));
                   hexlen = (int)lbl.CountryBlock.Length;
                } else {
+                  tab = 28;
                   GarminCore.Files.StdFile_LBL.CountryRecord record = lbl.CountryDataList[idx];
-                  info.AppendLine("TextOffset (3 Byte): " + DecimalAndHexAndBinary((ulong)record.TextOffset));
-                  info.AppendLine("   Text:             '" + lbl.GetText(record.TextOffset, true) + "'");
+                  info.AppendLine(FillWithSpace("TextOffsetInLBL (3 Byte)", tab, false, DecimalAndHexAndBinary((ulong)record.TextOffsetInLBL)));
+                  info.AppendLine(FillWithSpace("   Country", tab, true, record.GetText(lbl, false)));
                   firsthexadr += idx * lbl.CountryBlock.Recordsize;
                   hexlen = idx * lbl.CountryBlock.Recordsize;
                }
@@ -532,17 +538,19 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_RegionBlock:
                firsthexadr = lbl.RegionBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("RegionBlock: " + lbl.RegionAndCountryDataList.Count.ToString());
-                  info.AppendLine("  Block:     " + lbl.RegionBlock.ToString());
+                  tab = 14;
+                  info.AppendLine(FillWithSpace("RegionBlock", tab, false, lbl.RegionAndCountryDataList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.RegionBlock.ToString()));
                   hexlen = (int)lbl.RegionBlock.Length;
                } else {
+                  tab = 28;
                   GarminCore.Files.StdFile_LBL.RegionAndCountryRecord record = lbl.RegionAndCountryDataList[idx];
-                  info.AppendLine("CountryIndex (2 Byte): " + DecimalAndHexAndBinary(record.CountryIndex));
+                  info.AppendLine(FillWithSpace("CountryIndex (2 Byte)", tab, false, DecimalAndHexAndBinary(record.CountryIndex)));
                   int idxcountry = record.CountryIndex - 1; // 1-basiert
-                  info.AppendLine("   TextOffset:         " + DecimalAndHexAndBinary((ulong)lbl.CountryDataList[idxcountry].TextOffset));
-                  info.AppendLine("   Text:               '" + lbl.GetText(lbl.CountryDataList[idxcountry].TextOffset, true) + "'");
-                  info.AppendLine("TextOffset (3 Byte):   " + DecimalAndHexAndBinary((ulong)record.TextOffset));
-                  info.AppendLine("   Text:               '" + lbl.GetText(record.TextOffset, true) + "'");
+                  info.AppendLine(FillWithSpace("   TextOffsetInLBL", tab, false, DecimalAndHexAndBinary((ulong)lbl.CountryDataList[idxcountry].TextOffsetInLBL)));
+                  info.AppendLine(FillWithSpace("   Region", tab, true, record.GetRegionText(lbl, false)));
+                  info.AppendLine(FillWithSpace("TextOffset (3 Byte)", tab, false, DecimalAndHexAndBinary((ulong)record.TextOffset)));
+                  info.AppendLine(FillWithSpace("   Country", tab, true, record.GetCountryText(lbl, false)));
                   firsthexadr += idx * lbl.RegionBlock.Recordsize;
                   hexlen = lbl.RegionBlock.Recordsize;
                }
@@ -551,127 +559,120 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_CityBlock:
                firsthexadr = lbl.CityBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("CityBlock: " + lbl.CityAndRegionOrCountryDataList.Count.ToString());
-                  info.AppendLine("  Block:   " + lbl.CityBlock.ToString());
+                  tab = 14;
+                  info.AppendLine(FillWithSpace("CityBlock", tab, false, lbl.CityAndRegionOrCountryDataList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.CityBlock.ToString()));
                   hexlen = (int)lbl.CityBlock.Length;
                } else {
+                  tab = 47;
                   GarminCore.Files.StdFile_LBL.CityAndRegionOrCountryRecord record = lbl.CityAndRegionOrCountryDataList[idx];
-                  if (record.IsPOI) {
-                     info.AppendLine("SubdivisionNumber (Bit 0..15) (3 Byte):    " + DecimalAndHexAndBinary(record.SubdivisionNumber));
-                     info.AppendLine("POIIndex          (Bit 16..23):            " + DecimalAndHexAndBinary((ulong)record.POIIndex));
+                  if (record.IsPointInRGN) {
+                     info.AppendLine(FillWithSpace("SubdivisionNumberInRGN (Bit 0..15) (3 Byte)", tab, false, DecimalAndHexAndBinary(record.SubdivisionNumberInRGN)));
+                     info.AppendLine(FillWithSpace("PointIndexInRGN (Bit 16..23)", tab, false, DecimalAndHexAndBinary((ulong)record.PointIndexInRGN)));
+
+                     GarminCore.Files.StdFile_RGN rgn = GetFirstRGNinTreeView(tvd, filedata.Basename);
+                     if (rgn != null) {
+                        GarminCore.Files.StdFile_RGN.RawPointData rpd = rgn.GetPoint1(record.SubdivisionNumberInRGN, record.PointIndexInRGN);
+                        if (!(rpd is null))
+                           info.AppendLine(FillWithSpace("   Text", tab, true, rpd.GetText(lbl, true)));
+                     }
                   } else {
-                     info.AppendLine("TextOffset (3 Byte):                       " + DecimalAndHexAndBinary((ulong)record.TextOffset));
-                     info.AppendLine("   Text:                                   '" + lbl.GetText(record.TextOffset, true) + "'");
+                     info.AppendLine(FillWithSpace("TextOffset (3 Byte)", tab, false, DecimalAndHexAndBinary((ulong)record.TextOffsetInLBL)));
+                     info.AppendLine(FillWithSpace("   Text'", tab, true, record.GetCityText(lbl, tvd.GetRGN(filedata.Basename), false)));
                   }
-                  info.AppendLine("RegionOrCountryIndex (Bit 0..13) (2 Byte): " + DecimalAndHexAndBinary(record.RegionOrCountryIndex));
-                  info.AppendLine("   RegionIsCountry   (Bit 14):             " + record.RegionIsCountry.ToString());
-                  info.AppendLine("   IsPOI             (Bit 15):             " + record.IsPOI.ToString());
-                  info.AppendLine("   Text:                                   '" + lbl.GetText(record.RegionIsCountry ?
-                                                                                                      lbl.CountryDataList[record.RegionOrCountryIndex - 1].TextOffset :
-                                                                                                      lbl.RegionAndCountryDataList[record.RegionOrCountryIndex - 1].TextOffset, true) + "'");
+                  info.AppendLine(FillWithSpace("RegionOrCountryIndex (Bit 0..13) (2 Byte)", tab, false, DecimalAndHexAndBinary(record.RegionOrCountryIndex)));
+                  info.AppendLine(FillWithSpace("   IsCountry         (Bit 14)", tab, false, record.IsCountry.ToString()));
+                  info.AppendLine(FillWithSpace("   IsPointInRGN      (Bit 15)", tab, false, record.IsPointInRGN.ToString()));
+                  info.AppendLine(FillWithSpace("   Country", tab, true, record.GetCountryText(lbl, false)));
+                  if (!record.IsCountry)
+                     info.AppendLine(FillWithSpace("   Region", tab, true, record.GetRegionText(lbl, false)));
                   firsthexadr += idx * lbl.CityBlock.Recordsize;
                   hexlen = lbl.CityBlock.Recordsize;
                }
                break;
 
-            case NodeContent.NodeType.LBL_POIIndexBlock:
-               firsthexadr = lbl.POIIndexBlock.Offset;
-               if (idx < 0) {
-                  info.AppendLine("PoiIndexDataList: " + lbl.PoiIndexDataList.Count.ToString());
-                  info.AppendLine("  Block:          " + lbl.POIIndexBlock.ToString());
-                  hexlen = (int)lbl.POIIndexBlock.Length;
-               } else {
-                  GarminCore.Files.StdFile_LBL.PoiIndexRecord record = lbl.PoiIndexDataList[idx];
-                  info.AppendLine("POIIndex          (1 Byte): " + DecimalAndHexAndBinary(record.POIIndex));
-                  info.AppendLine("SubdivisionNumber (2 Byte): " + DecimalAndHexAndBinary(record.SubdivisionNumber));
-                  info.AppendLine("SubType           (1 Byte): " + DecimalAndHexAndBinary(record.SubType));
-                  firsthexadr += idx * lbl.POIIndexBlock.Recordsize;
-                  hexlen = lbl.POIIndexBlock.Recordsize;
-               }
-               break;
-
-            case NodeContent.NodeType.LBL_POIPropertiesBlock:
+            case NodeContent.NodeType.LBL_PointPropertiesBlock:
                firsthexadr = lbl.POIPropertiesBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("POIPropertiesBlock: " + lbl.POIPropertiesList.Count.ToString());
-                  info.AppendLine("  Block:            " + lbl.POIPropertiesBlock.ToString());
+                  tab = 23;
+                  info.AppendLine(FillWithSpace("PointPropertiesBlock", tab, false, lbl.PointPropertiesList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.POIPropertiesBlock.ToString()));
                   hexlen = (int)lbl.POIPropertiesBlock.Length;
                } else {
-                  GarminCore.Files.StdFile_LBL.PoiRecord record = lbl.POIPropertiesList[idx];
-                  info.AppendLine("RecordLength: " + DecimalAndHexAndBinary(record.DataLength(lbl.POIGlobalMask)));
-                  info.AppendLine("TextOffset (Bit 0..22) (3 Byte): " + DecimalAndHexAndBinary(record.TextOffset));
-                  info.AppendLine("   Text:                         '" + lbl.GetText(record.TextOffset, true) + "'");
-                  info.AppendLine("LocalProperties (Bit 23):        " + record.HasLocalProperties.ToString());
+                  tab = 35;
+                  GarminCore.Files.StdFile_LBL.PointDataRecord record = lbl.PointPropertiesList[idx];
+                  info.AppendLine(FillWithSpace("RecordLength", tab, false, DecimalAndHexAndBinary(record.DataLength(lbl.POIGlobalMask))));
+                  info.AppendLine(FillWithSpace("TextOffset (Bit 0..22) (3 Byte)", tab, false, DecimalAndHexAndBinary(record.TextOffset)));
+                  if (record.TextOffset > 0)
+                     info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.TextOffset, true)));
+                  info.AppendLine(FillWithSpace("HasLocalProperties (Bit 23)", tab, false, record.HasLocalProperties.ToString()));
                   hexlen = 3;
                   if (!record.HasLocalProperties) {
                      info.AppendLine("GlobalProperties:");
                   } else {
                      hexlen += 1;
                   }
-                  info.AppendLine("   (1 Byte):               " + DecimalAndHexAndBinary((byte)record._internalPropMask));
-                  info.AppendLine("   has_street_num (Bit 0): " + record.StreetNumberIsSet.ToString());
-                  info.AppendLine("   has_street     (Bit 1): " + record.StreetIsSet.ToString());
-                  info.AppendLine("   has_city       (Bit 2): " + record.CityIsSet.ToString());
-                  info.AppendLine("   has_zip        (Bit 3): " + record.ZipIsSet.ToString());
-                  info.AppendLine("   has_phone      (Bit 4): " + record.PhoneIsSet.ToString());
-                  info.AppendLine("   has_exit       (Bit 5): " + record.ExitIsSet.ToString());
-                  info.AppendLine("   has_tide_pred  (Bit 6): " + record.TidePredictionIsSet.ToString());
-                  info.AppendLine("   unknown        (Bit 7): " + record.UnknownIsSet.ToString());
+                  info.AppendLine(FillWithSpace("   (1 Byte):               ", tab, false, DecimalAndHexAndBinary((byte)record._internalPropMask)));
+                  info.AppendLine(FillWithSpace("   has_street_num (Bit 0): ", tab, false, record.StreetNumberIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   has_street     (Bit 1): ", tab, false, record.StreetIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   has_city       (Bit 2): ", tab, false, record.CityIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   has_zip        (Bit 3): ", tab, false, record.ZipIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   has_phone      (Bit 4): ", tab, false, record.PhoneIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   has_exit       (Bit 5): ", tab, false, record.ExitIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   has_tide_pred  (Bit 6): ", tab, false, record.TidePredictionIsSet.ToString()));
+                  info.AppendLine(FillWithSpace("   unknown        (Bit 7): ", tab, false, record.UnknownIsSet.ToString()));
 
                   if (record.StreetNumberIsSet) {
                      if (record.StreetNumberIsCoded) {
-                        info.AppendLine(string.Format("StreetNumber ({0} Byte): '{1}'", record._streetnumber_encoded.Length, record.StreetNumber));
+                        info.AppendLine(FillWithSpace(string.Format("StreetNumber ({0} Byte)", record._streetnumber_encoded.Length), tab, true, record.StreetNumber));
                         hexlen += record._streetnumber_encoded.Length;
                      } else {
-                        info.AppendLine("StreetNumberOffset (3 Byte): " + DecimalAndHexAndBinary(record.StreetNumberOffset));
-                        info.AppendLine("   Text:                     '" + lbl.GetText(record.StreetNumberOffset, true) + "'");
+                        info.AppendLine(FillWithSpace("StreetNumberOffset (3 Byte)", tab, false, DecimalAndHexAndBinary(record.StreetNumberOffset)));
+                        info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.StreetNumberOffset, true)));
                         hexlen += 3;
                      }
                   }
                   if (record.StreetIsSet) {
-                     info.AppendLine("StreetOffset (3 Byte): " + DecimalAndHexAndBinary(record.StreetOffset));
-                     info.AppendLine("   Text:               '" + lbl.GetText(record.StreetOffset, true) + "'");
+                     info.AppendLine(FillWithSpace("StreetOffset (3 Byte)", tab, false, DecimalAndHexAndBinary(record.StreetOffset)));
+                     info.AppendLine(FillWithSpace("   Text'", tab, true, lbl.GetText(record.StreetOffset, true)));
                      hexlen += 3;
                   }
                   if (record.CityIsSet) {
-                     info.AppendLine("CityIndex (" + (record.UseShortCityIndex ? "1" : "2") + " Byte): " + DecimalAndHexAndBinary(record.CityIndex));
                      GarminCore.Files.StdFile_LBL.CityAndRegionOrCountryRecord cityrecord = lbl.CityAndRegionOrCountryDataList[record.CityIndex - 1];
-                     if (!cityrecord.IsPOI)
-                        info.AppendLine("   City-Text:          '" + lbl.GetText(cityrecord.TextOffset, true) + "'");
-                     if (cityrecord.RegionIsCountry)
-                        info.AppendLine("   Country-Text:       '" + lbl.GetText(lbl.CountryDataList[cityrecord.RegionOrCountryIndex - 1].TextOffset, true) + "'");
-                     else
-                        info.AppendLine("   Region-Text:        '" + lbl.GetText(lbl.RegionAndCountryDataList[cityrecord.RegionOrCountryIndex - 1].TextOffset, true) + "'");
+                     info.AppendLine(FillWithSpace("CityIndex (" + (record.UseShortCityIndex ? "1" : "2") + " Byte)", tab, false, DecimalAndHexAndBinary(record.CityIndex)));
+                     info.AppendLine(FillWithSpace("   City-Text" + (cityrecord.IsPointInRGN ? " (Point in RGN)" : ""), tab, true, cityrecord.GetCityText(lbl, tvd.GetRGN(filedata.Basename), false)));
+                     info.AppendLine(FillWithSpace("   Country-Text", tab, true, cityrecord.GetCountryText(lbl, false)));
+                     info.AppendLine(FillWithSpace("   Region-Text", tab, true, cityrecord.GetRegionText(lbl, false)));
                      hexlen += record.UseShortCityIndex ? 1 : 2;
                   }
                   if (record.ZipIsSet) {
-                     info.AppendLine("ZipIndex (" + (record.UseShortZipIndex ? "1" : "2") + " Byte): " + DecimalAndHexAndBinary(record.ZipIndex));
-                     info.AppendLine("   Text:               '" + lbl.GetText(lbl.ZipDataList[record.ZipIndex - 1].TextOffset, true) + "'");
+                     info.AppendLine(FillWithSpace("ZipIndex (" + (record.UseShortZipIndex ? "1" : "2") + " Byte)", tab, false, DecimalAndHexAndBinary(record.ZipIndex)));
+                     info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(lbl.ZipDataList[record.ZipIndex - 1].TextOffsetInLBL, true)));
                      hexlen += record.UseShortZipIndex ? 1 : 2;
                   }
                   if (record.PhoneIsSet) {
                      if (record.PhoneNumberIsCoded) {
-                        info.AppendLine(string.Format("StreetNumber ({0} Byte): '{1}'", record._phonenumber_encoded.Length, record.PhoneNumber));
+                        info.AppendLine(FillWithSpace(string.Format("PhoneNumber ({0} Byte)", record._phonenumber_encoded.Length), tab, true, record.PhoneNumber));
                         hexlen += record._phonenumber_encoded.Length;
                      } else {
-                        info.AppendLine("PhoneNumberOffset (3 Byte): " + DecimalAndHexAndBinary(record.PhoneNumberOffset));
-                        info.AppendLine("   Text:                    '" + lbl.GetText(record.PhoneNumberOffset, true) + "'");
+                        info.AppendLine(FillWithSpace("PhoneNumberOffset (3 Byte)", tab, false, DecimalAndHexAndBinary(record.PhoneNumberOffset)));
+                        info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.PhoneNumberOffset, true)));
                         hexlen += 3;
                      }
                   }
                   if (record.ExitIsSet) {
-                     info.AppendLine("ExitOffset (Bit 0..22) (3 Byte): " + DecimalAndHexAndBinary(record.ExitOffset));
-                     info.AppendLine("   Text:                         '" + lbl.GetText(record.ExitOffset, true) + "'");
+                     info.AppendLine(FillWithSpace("ExitOffset (Bit 0..22) (3 Byte)", tab, false, DecimalAndHexAndBinary(record.ExitOffset)));
+                     info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.ExitOffset, true)));
                      hexlen += 3;
-                     info.AppendLine("ExitHighwayIndex       (" + (record.UseShortExitHighwayIndex ? "1" : "2") + " Byte): " + DecimalAndHexAndBinary(record.ExitHighwayIndex));
+                     info.AppendLine(FillWithSpace("ExitHighwayIndex (" + (record.UseShortExitHighwayIndex ? "1" : "2") + " Byte)", tab, false, DecimalAndHexAndBinary(record.ExitHighwayIndex)));
                      hexlen += record.UseShortExitHighwayIndex ? 1 : 2;
                      if (record.ExitIndexIsSet) {
-                        info.AppendLine("ExitIndex              (" + (record.UseShortExitIndex ? "1" : "2") + " Byte): " + DecimalAndHexAndBinary(record.ExitIndex));
+                        info.AppendLine(FillWithSpace("ExitIndex (" + (record.UseShortExitIndex ? "1" : "2") + " Byte)", tab, false, DecimalAndHexAndBinary(record.ExitIndex)));
                         hexlen += record.UseShortExitIndex ? 1 : 2;
                      }
                   }
 
-                  foreach (var item in lbl.POIPropertiesListOffsets) {
+                  foreach (var item in lbl.PointPropertiesListOffsets) {
                      if (item.Value == idx) {
                         firsthexadr = lbl.POIPropertiesBlock.Offset + item.Key;
                         break;
@@ -680,16 +681,36 @@ namespace GMExplorer {
                }
                break;
 
-            case NodeContent.NodeType.LBL_POITypeIndexBlock:
+            case NodeContent.NodeType.LBL_PointIndexList4RGN:
+               firsthexadr = lbl.POIIndexBlock.Offset;
+               if (idx < 0) {
+                  tab = 23;
+                  info.AppendLine(FillWithSpace("PointIndexList4RGN", tab, false, lbl.PointIndexList4RGN.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.POIIndexBlock.ToString()));
+                  hexlen = (int)lbl.POIIndexBlock.Length;
+               } else {
+                  tab = 35;
+                  GarminCore.Files.StdFile_LBL.PointIndexRecord record = lbl.PointIndexList4RGN[idx];
+                  info.AppendLine(FillWithSpace("PointIndexInRGN        (1 Byte)", tab, false, DecimalAndHexAndBinary(record.PointIndexInRGN)));
+                  info.AppendLine(FillWithSpace("SubdivisionNumberInRGN (2 Byte)", tab, false, DecimalAndHexAndBinary(record.SubdivisionNumberInRGN)));
+                  info.AppendLine(FillWithSpace("SubType                (1 Byte)", tab, false, DecimalAndHexAndBinary(record.SubType)));
+                  firsthexadr += idx * lbl.POIIndexBlock.Recordsize;
+                  hexlen = lbl.POIIndexBlock.Recordsize;
+               }
+               break;
+
+            case NodeContent.NodeType.LBL_PointTypeIndexList4RGN:
                firsthexadr = lbl.POITypeIndexBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("POITypeIndexBlock: " + lbl.PoiTypeIndexDataList.Count.ToString());
-                  info.AppendLine("  Block:           " + lbl.POITypeIndexBlock.ToString());
+                  tab = 23;
+                  info.AppendLine(FillWithSpace("POITypeIndexBlock", tab, false, lbl.PointTypeIndexList4RGN.Count.ToString()));
+                  info.AppendLine(FillWithSpace("  Block", tab, false, lbl.POITypeIndexBlock.ToString()));
                   hexlen = (int)lbl.POITypeIndexBlock.Length;
                } else {
-                  GarminCore.Files.StdFile_LBL.PoiTypeIndexRecord record = lbl.PoiTypeIndexDataList[idx];
-                  info.AppendLine("POIType  (1 Byte): " + DecimalAndHexAndBinary(record.POIType));
-                  info.AppendLine("StartIdx (3 Byte): " + DecimalAndHexAndBinary(record.StartIdx));
+                  tab = 23;
+                  GarminCore.Files.StdFile_LBL.PointTypeIndexRecord record = lbl.PointTypeIndexList4RGN[idx];
+                  info.AppendLine(FillWithSpace("PointType (1 Byte)", tab, false, DecimalAndHexAndBinary(record.PointType)));
+                  info.AppendLine(FillWithSpace("StartIdx  (3 Byte)", tab, false, DecimalAndHexAndBinary(record.StartIdx)));
                   firsthexadr += idx * lbl.POITypeIndexBlock.Recordsize;
                   hexlen = lbl.POITypeIndexBlock.Recordsize;
                }
@@ -698,13 +719,15 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_ZipBlock:
                firsthexadr = lbl.ZipBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("ZipBlock: " + lbl.ZipDataList.Count.ToString());
-                  info.AppendLine("  Block:  " + lbl.ZipBlock.ToString());
+                  tab = 13;
+                  info.AppendLine(FillWithSpace("ZipBlock", tab, false, lbl.ZipDataList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.ZipBlock.ToString()));
                   hexlen = (int)lbl.ZipBlock.Length;
                } else {
+                  tab = 25;
                   GarminCore.Files.StdFile_LBL.ZipRecord record = lbl.ZipDataList[idx];
-                  info.AppendLine("TextOffset (3 Byte): " + DecimalAndHexAndBinary(record.TextOffset));
-                  info.AppendLine("   Text:            '" + lbl.GetText(record.TextOffset, true) + "'");
+                  info.AppendLine(FillWithSpace("TextOffset (3 Byte)", tab, false, DecimalAndHexAndBinary(record.TextOffsetInLBL)));
+                  info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.TextOffsetInLBL, true)));
                   firsthexadr += idx * lbl.ZipBlock.Recordsize;
                   hexlen = lbl.ZipBlock.Recordsize;
                }
@@ -713,15 +736,17 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_HighwayWithExitBlock:
                firsthexadr = lbl.HighwayWithExitBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("HighwayWithExitBlock: " + lbl.HighwayWithExitList.Count.ToString());
-                  info.AppendLine("  Block:              " + lbl.HighwayWithExitBlock.ToString());
+                  tab = 25;
+                  info.AppendLine(FillWithSpace("HighwayWithExitBlock", tab, false, lbl.HighwayWithExitList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.HighwayWithExitBlock.ToString()));
                   hexlen = (int)lbl.HighwayWithExitBlock.Length;
                } else {
+                  tab = 30;
                   GarminCore.Files.StdFile_LBL.HighwayWithExitRecord record = lbl.HighwayWithExitList[idx];
-                  info.AppendLine("TextOffset      (3 Byte): " + DecimalAndHexAndBinary(record.TextOffset));
-                  info.AppendLine("   Text:                  '" + lbl.GetText(record.TextOffset, true) + "'");
-                  info.AppendLine("FirstExitOffset (2 Byte): " + DecimalAndHexAndBinary(record.FirstExitOffset));
-                  info.AppendLine("Unknown1        (1 Byte): " + DecimalAndHexAndBinary(record.Unknown1));
+                  info.AppendLine(FillWithSpace("TextOffset      (3 Byte)", tab, false, DecimalAndHexAndBinary(record.TextOffset)));
+                  info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.TextOffset, true)));
+                  info.AppendLine(FillWithSpace("FirstExitOffset (2 Byte)", tab, false, DecimalAndHexAndBinary(record.FirstExitOffset)));
+                  info.AppendLine(FillWithSpace("Unknown1        (1 Byte)", tab, false, DecimalAndHexAndBinary(record.Unknown1)));
                   firsthexadr += idx * lbl.HighwayWithExitBlock.Recordsize;
                   hexlen = lbl.HighwayWithExitBlock.Recordsize;
                }
@@ -730,16 +755,18 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_ExitBlock:
                firsthexadr = lbl.ExitBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("ExitBlock: " + lbl.ExitList.Count.ToString());
-                  info.AppendLine("  Block:   " + lbl.ExitBlock.ToString());
+                  tab = 25;
+                  info.AppendLine(FillWithSpace("ExitBlock", tab, false, lbl.ExitList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.ExitBlock.ToString()));
                   hexlen = (int)lbl.HighwayWithExitBlock.Length;
                } else {
+                  tab = 40;
                   GarminCore.Files.StdFile_LBL.ExitRecord record = lbl.ExitList[idx];
-                  info.AppendLine("TextOffset    (Bit 0..21) (3 Byte): " + DecimalAndHexAndBinary(record.TextOffset));
-                  info.AppendLine("   Text:                            '" + lbl.GetText(record.TextOffset, true) + "'");
-                  info.AppendLine("LastFacilitie (Bit 23):             " + record.LastFacilitie.ToString());
-                  info.AppendLine("Type          (Bit 0..3)  (1 Byte): " + DecimalAndHexAndBinary(record.Type));
-                  info.AppendLine("Direction     (Bit 5..7)  (1 Byte): " + DecimalAndHexAndBinary(record.Direction));
+                  info.AppendLine(FillWithSpace("TextOffsetInLBL (Bit 0..21) (3 Byte)", tab, false, DecimalAndHexAndBinary(record.TextOffsetInLBL)));
+                  info.AppendLine(FillWithSpace("   Text", tab, true, lbl.GetText(record.TextOffsetInLBL, true)));
+                  info.AppendLine(FillWithSpace("LastFacilitie   (Bit 23)", tab, false, record.LastFacilitie.ToString()));
+                  info.AppendLine(FillWithSpace("Type            (Bit 0..3)  (1 Byte)", tab, false, DecimalAndHexAndBinary(record.Type)));
+                  info.AppendLine(FillWithSpace("Direction       (Bit 5..7)  (1 Byte)", tab, false, DecimalAndHexAndBinary(record.Direction)));
                   firsthexadr += idx * lbl.ExitBlock.Recordsize;
                   hexlen = lbl.ExitBlock.Recordsize;
                }
@@ -748,14 +775,16 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_HighwayExitBlock:
                firsthexadr = lbl.HighwayExitBlock.Offset;
                if (idx < 0) {
-                  info.AppendLine("HighwayWithExitBlock: " + lbl.HighwayExitDefList.Count.ToString());
-                  info.AppendLine("  Block:              " + lbl.HighwayExitBlock.ToString());
+                  tab = 25;
+                  info.AppendLine(FillWithSpace("HighwayWithExitBlock", tab, false, lbl.HighwayExitDefList.Count.ToString()));
+                  info.AppendLine(FillWithSpace("  Block", tab, false, lbl.HighwayExitBlock.ToString()));
                   hexlen = (int)lbl.HighwayExitBlock.Length;
                } else {
+                  tab = 25;
                   GarminCore.Files.StdFile_LBL.HighwayExitDefRecord record = lbl.HighwayExitDefList[idx];
-                  info.AppendLine("Unknown1        (1 Byte): " + DecimalAndHexAndBinary(record.Unknown1));
-                  info.AppendLine("RegionIndex     (2 Byte): " + DecimalAndHexAndBinary(record.RegionIndex));
-                  info.AppendLine("Exits                   : " + DecimalAndHexAndBinary(record.ExitList.Count));
+                  info.AppendLine(FillWithSpace("Unknown1    (1 Byte)", tab, false, DecimalAndHexAndBinary(record.Unknown1)));
+                  info.AppendLine(FillWithSpace("RegionIndex (2 Byte)", tab, false, DecimalAndHexAndBinary(record.RegionIndex)));
+                  info.AppendLine(FillWithSpace("Exits", tab, false, DecimalAndHexAndBinary(record.ExitList.Count)));
                   firsthexadr += idx * lbl.HighwayExitBlock.Recordsize;
                   hexlen = 3 + 3 * record.ExitList.Count;
                }
@@ -764,9 +793,10 @@ namespace GMExplorer {
             case NodeContent.NodeType.LBL_SortDescriptorDefBlock:
                firsthexadr = lbl.SortDescriptorDefBlock.Offset;
                if (idx < 0) {
+                  tab = 25;
                   info.AppendLine("SortDescriptorDefBlock");
-                  info.AppendLine("  Block:          " + lbl.SortDescriptorDefBlock.ToString());
-                  info.AppendLine("  SortDescriptor: '" + lbl.SortDescriptor + "'");
+                  info.AppendLine(FillWithSpace("   Block", tab, false, lbl.SortDescriptorDefBlock.ToString()));
+                  info.AppendLine(FillWithSpace("   SortDescriptor", tab, true, lbl.SortDescriptor));
                   hexlen = (int)lbl.SortDescriptorDefBlock.Length;
                }
                break;

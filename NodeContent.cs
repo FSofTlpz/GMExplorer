@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GMExplorer {
 
+   /// <summary>
+   /// Infos für einen Node des TreeView
+   /// </summary>
    public class NodeContent {
 
       public enum NodeType {
@@ -55,9 +56,9 @@ namespace GMExplorer {
          LBL_CountryBlock,
          LBL_RegionBlock,
          LBL_CityBlock,
-         LBL_POIIndexBlock,
-         LBL_POIPropertiesBlock,
-         LBL_POITypeIndexBlock,
+         LBL_PointIndexList4RGN,
+         LBL_PointPropertiesBlock,
+         LBL_PointTypeIndexList4RGN,
          LBL_ZipBlock,
          LBL_HighwayWithExitBlock,
          LBL_ExitBlock,
@@ -150,7 +151,10 @@ namespace GMExplorer {
          TYP_NT_LabelblockTable1,
          TYP_NT_LabelblockTable2,
 
-
+         NET_RoadDefinitionsBlock,
+         NET_SegmentedRoadsBlock,
+         NET_SortedRoadsBlock,
+         NET_PostHeaderData,
 
 
       }
@@ -174,7 +178,7 @@ namespace GMExplorer {
       /// <summary>
       /// spezielle Daten für eine Datei
       /// </summary>
-      public class Content4File : IDisposable {
+      public abstract class Content4File : IDisposable {
 
          /// <summary>
          /// vollständiger Dateiname
@@ -202,7 +206,7 @@ namespace GMExplorer {
          public GarminCore.BinaryReaderWriter BinaryReader { get; protected set; }
 
          /// <summary>
-         /// allgemeines Objekt für zusätzliche Daten für Garmin-Dateien
+         /// allgemeines Objekt für zusätzliche Daten für Garmin-Dateien (kann noch null sein, obwohl ein <see cref="BinaryReader"/> ex.)
          /// </summary>
          public object GarminFile { get; set; }
 
@@ -237,7 +241,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_TRE file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_TRE();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading TRE-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_TRE)
                file = GarminFile as GarminCore.Files.StdFile_TRE;
             return file;
@@ -253,7 +261,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_LBL file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_LBL();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading LBL-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_LBL)
                file = GarminFile as GarminCore.Files.StdFile_LBL;
             return file;
@@ -270,7 +282,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_RGN file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_RGN(tre);
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading RGN-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_RGN)
                file = GarminFile as GarminCore.Files.StdFile_RGN;
             return file;
@@ -279,14 +295,19 @@ namespace GMExplorer {
          /// <summary>
          /// liefert das <see cref="GarminFile"/> als <see cref="GarminCore.Files.StdFile_NET"/>
          /// <para>Falls noch nicht erfolgt, wird die NET-Datei eingelesen.</para>
-         /// <para>Falls <see cref="GarminCore.Files.StdFile_NET"/> keine NET-Datei ist, wird null geliefert.</para>
          /// </summary>
+         /// <param name="lbl"></param>
          /// <returns></returns>
-         public GarminCore.Files.StdFile_NET GetGarminFileAsNET() {
+         public GarminCore.Files.StdFile_NET GetGarminFileAsNET(GarminCore.Files.StdFile_LBL lbl) {
             GarminCore.Files.StdFile_NET file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_NET();
-               file.Read(BinaryReader);
+               file.Lbl = lbl;
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading NET-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_NET)
                file = GarminFile as GarminCore.Files.StdFile_NET;
             return file;
@@ -302,7 +323,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_NOD file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_NOD();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading NOD-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_NOD)
                file = GarminFile as GarminCore.Files.StdFile_NOD;
             return file;
@@ -318,7 +343,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_DEM file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_DEM();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading DEM-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_DEM)
                file = GarminFile as GarminCore.Files.StdFile_DEM;
             return file;
@@ -334,7 +363,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_GMP file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_GMP();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading GMP-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_GMP)
                file = GarminFile as GarminCore.Files.StdFile_GMP;
             return file;
@@ -350,7 +383,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_MAR file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_MAR();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading MAR-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_MAR)
                file = GarminFile as GarminCore.Files.StdFile_MAR;
             return file;
@@ -366,7 +403,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_MDR file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_MDR();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading MDR-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_MDR)
                file = GarminFile as GarminCore.Files.StdFile_MDR;
             return file;
@@ -382,7 +423,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_SRT file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_SRT();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading SRT-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_SRT)
                file = GarminFile as GarminCore.Files.StdFile_SRT;
             return file;
@@ -398,7 +443,11 @@ namespace GMExplorer {
             GarminCore.Files.StdFile_TYP file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.StdFile_TYP();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading TYP-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.StdFile_TYP)
                file = GarminFile as GarminCore.Files.StdFile_TYP;
             return file;
@@ -415,7 +464,11 @@ namespace GMExplorer {
             GarminCore.Files.File_TDB file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.File_TDB();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading TDB-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.File_TDB)
                file = GarminFile as GarminCore.Files.File_TDB;
             return file;
@@ -431,7 +484,11 @@ namespace GMExplorer {
             GarminCore.Files.File_MDX file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.File_MDX();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading MDR-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.File_MDX)
                file = GarminFile as GarminCore.Files.File_MDX;
             return file;
@@ -447,7 +504,11 @@ namespace GMExplorer {
             GarminCore.Files.File_MPS file = null;
             if (GarminFile == null) {
                GarminFile = file = new GarminCore.Files.File_MPS();
-               file.Read(BinaryReader);
+               try {
+                  file.Read(BinaryReader);
+               } catch (Exception ex) {
+                  throw new Exception("Error on reading MPS-File: " + ex.Message);
+               }
             } else if (GarminFile is GarminCore.Files.File_MPS)
                file = GarminFile as GarminCore.Files.File_MPS;
             return file;
@@ -455,7 +516,7 @@ namespace GMExplorer {
 
 
          public override string ToString() {
-            return string.Format("{0}, open: {1}, GarminFile is {2}",
+            return string.Format("{0}, open={1}, GarminFile is {2}",
                                  Filename,
                                  BinaryReader != null,
                                  GarminFile == null ? "null" : GarminFile.GetType().ToString());

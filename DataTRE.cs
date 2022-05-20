@@ -474,25 +474,27 @@ namespace GMExplorer {
          if (!(subdiv is GarminCore.Files.StdFile_TRE.SubdivInfo))
             info.AppendLine("SubdivInfoBasic");
 
+         int tab = 40;
+
          int count = 0;
          for (int i = 0; i < tre.MaplevelList.Count; i++) {
             count += tre.MaplevelList[i].SubdivInfos;
             if (subdividx < count) {
-               info.AppendLine("SubdivInfo for maplevel:               " + i.ToString());
+               info.AppendLine(FillWithSpace("SubdivInfo for maplevel", tab, false, i.ToString()));
                break;
             }
          }
-         info.AppendLine("Offset in RGN    (3 Byte):             " + DecimalAndHexAndBinary((ulong)subdiv.Data.Offset));
-         info.AppendLine("   calculated length:                  " + DecimalAndHexAndBinary((ulong)subdiv.Data.Length));
-         info.AppendLine("Content          (1 Byte):             " + DecimalAndHexAndBinary((ulong)(byte)subdiv.Content) + "; " + subdiv.Content.ToString());
-         info.AppendLine("Center Longitude (3 Byte):             " + DecimalAndHexAndBinary(subdiv.Center.Longitude) + "; " + subdiv.Center.LongitudeDegree.ToString() + "°");
-         info.AppendLine("Center Latitude  (3 Byte):             " + DecimalAndHexAndBinary(subdiv.Center.Latitude) + "; " + subdiv.Center.LatitudeDegree.ToString() + "°");
-         info.AppendLine("HalfWidth        (2 Byte) (Bit 0..14): " + DecimalAndHexAndBinary(subdiv.HalfWidth) + "; " + GarminCore.Coord.MapUnits2Degree(subdiv.HalfWidth).ToString() + "°");
-         info.AppendLine("LastSubdiv                (Bit 15):    " + subdiv.LastSubdiv.ToString());
-         info.AppendLine("HalfHeight       (2 Byte):             " + DecimalAndHexAndBinary(subdiv.HalfHeight) + "; " + GarminCore.Coord.MapUnits2Degree(subdiv.HalfHeight).ToString() + "°");
+         info.AppendLine(FillWithSpace("Offset in RGN    (3 Byte)", tab, false, DecimalAndHexAndBinary((ulong)subdiv.Data.Offset)));
+         info.AppendLine(FillWithSpace("   calculated length", tab, false, DecimalAndHexAndBinary((ulong)subdiv.Data.Length)));
+         info.AppendLine(FillWithSpace("Content          (1 Byte)", tab, false, DecimalAndHexAndBinary((ulong)(byte)subdiv.Content) + "; " + subdiv.Content.ToString()));
+         info.AppendLine(FillWithSpace("Center Longitude (3 Byte)", tab, false, DecimalAndHexAndBinary(subdiv.Center.Longitude) + "; " + subdiv.Center.LongitudeDegree.ToString() + "°"));
+         info.AppendLine(FillWithSpace("Center Latitude  (3 Byte)", tab, false, DecimalAndHexAndBinary(subdiv.Center.Latitude) + "; " + subdiv.Center.LatitudeDegree.ToString() + "°"));
+         info.AppendLine(FillWithSpace("HalfWidth        (2 Byte) (Bit 0..14)", tab, false, DecimalAndHexAndBinary(subdiv.HalfWidth) + "; " + GarminCore.Coord.MapUnits2Degree(subdiv.HalfWidth).ToString() + "°"));
+         info.AppendLine(FillWithSpace("LastSubdiv                (Bit 15)", tab, false, subdiv.LastSubdiv.ToString()));
+         info.AppendLine(FillWithSpace("HalfHeight       (2 Byte)", tab, false, DecimalAndHexAndBinary(subdiv.HalfHeight) + "; " + GarminCore.Coord.MapUnits2Degree(subdiv.HalfHeight).ToString() + "°"));
          if (subdiv is GarminCore.Files.StdFile_TRE.SubdivInfo) {
-            info.AppendLine("FirstChildSubdivIdx, 1 based (2 Byte): " + DecimalAndHexAndBinary((subdiv as GarminCore.Files.StdFile_TRE.SubdivInfo).FirstChildSubdivIdx1) + "; " + GarminCore.Coord.MapUnits2Degree(subdiv.HalfHeight).ToString() + "°");
-            info.AppendLine("   calculated ChildSubdivCount:        " + (subdiv as GarminCore.Files.StdFile_TRE.SubdivInfo).ChildSubdivInfos.ToString());
+            info.AppendLine(FillWithSpace("FirstChildSubdivIdx, 1 based (2 Byte)", tab, false, DecimalAndHexAndBinary((subdiv as GarminCore.Files.StdFile_TRE.SubdivInfo).FirstChildSubdivIdx1) + "; " + GarminCore.Coord.MapUnits2Degree(subdiv.HalfHeight).ToString() + "°"));
+            info.AppendLine(FillWithSpace("   calculated ChildSubdivCount", tab, false, (subdiv as GarminCore.Files.StdFile_TRE.SubdivInfo).ChildSubdivInfos.ToString()));
          }
 
          GarminCore.DataBlock block = new GarminCore.DataBlock();

@@ -27,33 +27,38 @@ namespace GMExplorer {
              rgn.TREFile.SubdivInfoList.Count == rgn.SubdivList.Count) {
             SubdivfInfo = rgn.TREFile.SubdivInfoList[subdividx];
 
-            if (SubdivData.PointList.Count > 0)
+            // ACHTUNG: Es kann offensichtlich "leere" Listen geben, d.h. es ist ein Objekttyp in SubdivfInfo angegeben, aber in SubdivData ex. keine Daten.
+            //          Deshalb kann die Offsetliste Objektlistengrößen ermittelt werden.
+
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.poi) != 0)
                offsets++;
-            if (SubdivData.IdxPointList.Count > 0)
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.idxpoi) != 0)
                offsets++;
-            if (SubdivData.LineList.Count > 0)
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.line) != 0)
                offsets++;
-            if (SubdivData.AreaList.Count > 0)
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.area) != 0)
                offsets++;
-            OffsetTab = new ushort[offsets];
             OffsetContent = new GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent[offsets];
 
+            int i = 0;
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.poi) != 0)
+               OffsetContent[i++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.poi;
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.idxpoi) != 0)
+               OffsetContent[i++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.idxpoi;
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.line) != 0)
+               OffsetContent[i++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.line;
+            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.area) != 0)
+               OffsetContent[i++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.area;
+
             // Offsettabelle füllen
+            OffsetTab = new ushort[offsets];
             if (offsets > 0)
                OffsetTab[0] = (ushort)(2 * (OffsetTab.Length - 1));
-            binreader.Seek(rgn.SubdivContentBlock.Offset + SubdivfInfo.Data.Offset);
-            for (int i = 1; i < offsets; i++)
-               OffsetTab[i] = binreader.ReadUInt16();
 
-            offsets = 0;
-            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.poi) != 0)
-               OffsetContent[offsets++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.poi;
-            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.idxpoi) != 0)
-               OffsetContent[offsets++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.idxpoi;
-            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.line) != 0)
-               OffsetContent[offsets++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.line;
-            if ((SubdivfInfo.Content & GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.area) != 0)
-               OffsetContent[offsets++] = GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.area;
+            binreader.Seek(rgn.SubdivContentBlock.Offset + SubdivfInfo.Data.Offset);
+            for (int j = 1; j < offsets; j++)
+               OffsetTab[j] = binreader.Read2AsUShort();
+
          }
 
          int count = 0;
@@ -164,14 +169,14 @@ namespace GMExplorer {
          switch (contenttype) {
             case GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.poi:
                for (int i = 0; i < idx; i++)
-                  block.Offset += SubdivData.PointList[i].DataLength;
-               block.Length = SubdivData.PointList[idx].DataLength;
+                  block.Offset += SubdivData.PointList1[i].DataLength;
+               block.Length = SubdivData.PointList1[idx].DataLength;
                break;
 
             case GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.idxpoi:
                for (int i = 0; i < idx; i++)
-                  block.Offset += SubdivData.IdxPointList[i].DataLength;
-               block.Length = SubdivData.IdxPointList[idx].DataLength;
+                  block.Offset += SubdivData.PointList2[i].DataLength;
+               block.Length = SubdivData.PointList2[idx].DataLength;
                break;
 
             case GarminCore.Files.StdFile_TRE.SubdivInfoBasic.SubdivContent.line:
@@ -218,11 +223,11 @@ namespace GMExplorer {
       }
 
       public GarminCore.Files.StdFile_RGN.RawPointData GetPoint(int idx) {
-         return SubdivData.PointList[idx];
+         return SubdivData.PointList1[idx];
       }
 
       public GarminCore.Files.StdFile_RGN.RawPointData GetIdxPoint(int idx) {
-         return SubdivData.IdxPointList[idx];
+         return SubdivData.PointList2[idx];
       }
 
       public GarminCore.Files.StdFile_RGN.RawPolyData GetLine(int idx) {
